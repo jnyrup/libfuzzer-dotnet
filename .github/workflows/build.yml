@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build
-        run: clang -Werror -O2 -fsanitize=fuzzer /nodefaultlib:msvcrt libfuzzer-dotnet-windows.cc -o libfuzzer-dotnet-windows.exe
+        run: clang -Werror -O2 -fsanitize=fuzzer libfuzzer-dotnet-windows.cc -o libfuzzer-dotnet-windows.exe /NODEFAULTLIB
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.dotnet-version }}
