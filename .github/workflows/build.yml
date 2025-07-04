@@ -11,7 +11,7 @@ env:
 
 jobs:
   build-windows:
-    runs-on: windows-latest
+    runs-on: windows-2025
 
     steps:
       - uses: actions/checkout@v4
@@ -32,8 +32,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Download LLVM
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 20
       - name: Build
-        run: clang -Werror -O2 -fsanitize=fuzzer libfuzzer-dotnet.cc -o libfuzzer-dotnet-ubuntu
+        run: clang-20 -Werror -O2 -fsanitize=fuzzer libfuzzer-dotnet.cc -o libfuzzer-dotnet-ubuntu
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.dotnet-version }}
@@ -53,14 +58,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Download LLVM
         run: |
-          apt-get update && apt-get install -y lsb-release wget software-properties-common gnupg
-          echo "deb [signed-by=/usr/share/keyrings/llvm-snapshot-keyring.gpg] http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-18 main" \
-            | tee /etc/apt/sources.list.d/llvm.list
-          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key \
-            | gpg --dearmor -o /usr/share/keyrings/llvm-snapshot-keyring.gpg
-          apt-get update && apt-get install -y clang-18 libfuzzer-18-dev llvm-18 llvm-18-dev
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 20
       - name: Build
-        run: clang-18 -Werror -O2 -fsanitize=fuzzer libfuzzer-dotnet.cc -o libfuzzer-dotnet-debian
+        run: clang-20 -Werror -O2 -fsanitize=fuzzer libfuzzer-dotnet.cc -o libfuzzer-dotnet-debian
       - uses: actions/upload-artifact@v4
         with:
           name: libfuzzer-dotnet-debian
